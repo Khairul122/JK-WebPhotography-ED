@@ -2,11 +2,10 @@
 session_start();
 error_reporting(0);
 include('includes/config.php');
-include('includes/format_rupiah.php');
-include('includes/library.php');
 if(strlen($_SESSION['alogin'])==0){	
-	header('location:index.php');
-} else{ ?>
+header('location:index.php');
+}else{
+?>
 <!doctype html>
 <html lang="en" class="no-js">
 <head>
@@ -19,7 +18,6 @@ if(strlen($_SESSION['alogin'])==0){
 	
 	<title><?php echo $pagedesc;?></title>
 	<link rel="shortcut icon" href="img/fav.png">
-
 	<!-- Font awesome -->
 	<link rel="stylesheet" href="css/font-awesome.min.css">
 	<!-- Sandstone Bootstrap CSS -->
@@ -36,63 +34,74 @@ if(strlen($_SESSION['alogin'])==0){
 	<link rel="stylesheet" href="css/awesome-bootstrap-checkbox.css">
 	<!-- Admin Stye -->
 	<link rel="stylesheet" href="css/style.css">
+<script type="text/javascript">
+function valid(theform){
+		pola_nama=/^[a-zA-Z]*$/;
+		if (!pola_nama.test(theform.vehicletitle.value)){
+		alert ('Hanya huruf yang diperbolehkan untuk Nama Baju!');
+		theform.vehicletitle.focus();
+		return false;
+		}
+		return (true);
+}
+</script>
 </head>
 <body>
 	<?php include('includes/header.php');?>
-
 	<div class="ts-main-content">
-		<?php include('includes/leftbar.php');?>
+	<?php include('includes/leftbar.php');?>
 		<div class="content-wrapper">
 			<div class="container-fluid">
 				<div class="row">
 					<div class="col-md-12">
-						<h2 class="page-title">Data Paket</h2>
-						<!-- Zero Configuration Table -->
-						<div class="panel panel-default">
-							<div class="panel-heading">
-								<a href="paket_tambah.php" class="btn btn-success">Tambah</a>
-							</div>
-							<div class="panel-body">
-							<div class = "table-responsive">
-								<table id="zctb" class="display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
-									<thead>
-										<tr>
-											<th>No</th>
-											<th>Nama Paket</th>
-											<th>Harga/Packs</th>
-											<th>Foto</th>
-											<th>Opsi</th>
-										</tr>
-									</thead>
-									<tbody>
-									<?php 
-										$nomor = 0;
-										$sqlmobil = "SELECT * FROM paket ORDER BY nama_paket ASC";
-										$querymobil = mysqli_query($koneksidb,$sqlmobil);
-										while ($result = mysqli_fetch_array($querymobil)){
-											$nomor++;
-											?>
-										<tr>
-											<td><?php echo htmlentities($nomor);?></td>
-											<td><?php echo htmlentities($result['nama_paket']);?></td>
-											<td><?php echo format_rupiah($result['harga']);?></td>
-											<td><img src="gallery/<?php echo $result['foto_paket'];?>" width="100px"></td>
-											<td align="center">
-												<a href="paket_edit.php?id=<?php echo $result['id_paket'];?>" class="btn btn-warning btn-xs">&nbsp;&nbsp;Ubah&nbsp;&nbsp;</a>&nbsp;&nbsp;
-												<a href="paket_hapus.php?id=<?php echo $result['id_paket'];?>" onclick="return confirm('Apakah anda yakin akan menghapus <?php echo $result['nama_paket'];?>?');" class="btn btn-danger btn-xs">&nbsp;&nbsp;Hapus&nbsp;&nbsp;</a>
-											</td>
-										</tr>
-										<?php } ?>
-									</tbody>
-								</table>
-							</div>
+						<h2 class="page-title">Tambah Data Gallery</h2>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="panel panel-default">
+									<div class="panel-heading">Form Tambah Data Gallery</div>
+								<div class="panel-body">
+									<form method="post" name="theform" action="gal_add.php" class="form-horizontal" onsubmit="return valid(this);" enctype="multipart/form-data">
+									<div class="form-group">
+										<label class="col-sm-2 control-label">Nama Gallery<span style="color:red">*</span></label>
+										<div class="col-sm-4">
+											<input type="text" name="nama" class="form-control" required>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label">Foto<span style="color:red">*</span></label>
+										<div class="col-sm-4">
+											<input class="form-control" type="file" name="img1" accept="image/*" required>
+										</div>
+									</div>
+									<div class="hr-dashed"></div>									
+								</div>
 							</div>
 						</div>
 					</div>
+
+					<div class="row">
+						<div class="col-md-12">
+							<div class="panel panel-default">
+								<div class="panel-body">
+									<div class="form-group">
+										<div class="col-sm-3">
+											<div class="checkbox checkbox-inline">
+												<button class="btn btn-primary" type="submit">Simpan</button>
+												<a href="gallery.php" class="btn btn-default">Batal</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>					
+					</div>
 				</div>
+				
 			</div>
 		</div>
 	</div>
+</form>
 
 	<!-- Loading Scripts -->
 	<script src="js/jquery.min.js"></script>

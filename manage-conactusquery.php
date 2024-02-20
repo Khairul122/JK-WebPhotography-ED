@@ -2,13 +2,25 @@
 session_start();
 error_reporting(0);
 include('includes/config.php');
-include('includes/format_rupiah.php');
-include('includes/library.php');
-if(strlen($_SESSION['alogin'])==0){	
-	header('location:index.php');
-} else{ ?>
+if(strlen($_SESSION['alogin'])==0)
+	{	
+header('location:index.php');
+}
+else{
+if(isset($_REQUEST['eid']))
+	{
+$eid=intval($_GET['eid']);
+$status=1;
+$sql = "UPDATE contactus SET status='$status' WHERE  id_cu='$eid'";
+$query = mysqli_query($koneksidb,$sql);
+$msg="Pesan sudah dibaca.";
+}
+
+ ?>
+
 <!doctype html>
 <html lang="en" class="no-js">
+
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -36,7 +48,27 @@ if(strlen($_SESSION['alogin'])==0){
 	<link rel="stylesheet" href="css/awesome-bootstrap-checkbox.css">
 	<!-- Admin Stye -->
 	<link rel="stylesheet" href="css/style.css">
+  <style>
+		.errorWrap {
+    padding: 10px;
+    margin: 0 0 20px 0;
+    background: #fff;
+    border-left: 4px solid #dd3d36;
+    -webkit-box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+}
+.succWrap{
+    padding: 10px;
+    margin: 0 0 20px 0;
+    background: #fff;
+    border-left: 4px solid #5cb85c;
+    -webkit-box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+}
+		</style>
+
 </head>
+
 <body>
 	<?php include('includes/header.php');?>
 
@@ -44,52 +76,61 @@ if(strlen($_SESSION['alogin'])==0){
 		<?php include('includes/leftbar.php');?>
 		<div class="content-wrapper">
 			<div class="container-fluid">
+
 				<div class="row">
 					<div class="col-md-12">
-						<h2 class="page-title">Data Paket</h2>
+
+						<h2 class="page-title">Menghubungi</h2>
+
 						<!-- Zero Configuration Table -->
 						<div class="panel panel-default">
-							<div class="panel-heading">
-								<a href="paket_tambah.php" class="btn btn-success">Tambah</a>
-							</div>
+							<div class="panel-heading">Data</div>
 							<div class="panel-body">
+							<?php if($error){?><div class="errorWrap"><strong>ERROR</strong>:<?php echo htmlentities($error); ?> </div><?php } 
+				else if($msg){?><div class="succWrap"><strong>SUCCESS</strong>:<?php echo htmlentities($msg); ?> </div><?php }?>
 							<div class = "table-responsive">
 								<table id="zctb" class="display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
 									<thead>
 										<tr>
 											<th>No</th>
-											<th>Nama Paket</th>
-											<th>Harga/Packs</th>
-											<th>Foto</th>
-											<th>Opsi</th>
+											<th>Nama</th>
+											<th>Email</th>
+											<th>Telp</th>
+											<th>Pesan</th>
+											<th>Tgl. Posting</th>
+											<th>Action</th>
 										</tr>
 									</thead>
 									<tbody>
-									<?php 
-										$nomor = 0;
-										$sqlmobil = "SELECT * FROM paket ORDER BY nama_paket ASC";
-										$querymobil = mysqli_query($koneksidb,$sqlmobil);
-										while ($result = mysqli_fetch_array($querymobil)){
-											$nomor++;
-											?>
+
+<?php 
+$sql = "SELECT * from contactus";
+$query = mysqli_query($koneksidb,$sql);
+$no=0;
+while($result=mysqli_fetch_array($query))
+{	$no++;
+	?>	
 										<tr>
-											<td><?php echo htmlentities($nomor);?></td>
-											<td><?php echo htmlentities($result['nama_paket']);?></td>
-											<td><?php echo format_rupiah($result['harga']);?></td>
-											<td><img src="gallery/<?php echo $result['foto_paket'];?>" width="100px"></td>
-											<td align="center">
-												<a href="paket_edit.php?id=<?php echo $result['id_paket'];?>" class="btn btn-warning btn-xs">&nbsp;&nbsp;Ubah&nbsp;&nbsp;</a>&nbsp;&nbsp;
-												<a href="paket_hapus.php?id=<?php echo $result['id_paket'];?>" onclick="return confirm('Apakah anda yakin akan menghapus <?php echo $result['nama_paket'];?>?');" class="btn btn-danger btn-xs">&nbsp;&nbsp;Hapus&nbsp;&nbsp;</a>
-											</td>
+											<td><?php echo $no;?></td>
+											<td><?php echo htmlentities($result['nama_visit']);?></td>
+											<td><?php echo htmlentities($result['email_visit']);?></td>
+											<td><?php echo htmlentities($result['telp_visit']);?></td>
+											<td><?php echo htmlentities($result['pesan']);?></td>
+											<td><?php echo htmlentities($result['tgl_posting']);?></td>
+											<?php if($result['status']==1){?>
+											<td>Sudah Dibaca</td><?php } else {?>
+											<td><a href="manage-conactusquery.php?eid=<?php echo htmlentities($result['id_cu']);?>" onclick="return confirm('Tandai sudah dibaca?')" >Baca</a></td>
+											<?php } ?>
 										</tr>
-										<?php } ?>
+								<?php } ?>		
 									</tbody>
 								</table>
 							</div>
-							</div>
 						</div>
 					</div>
+					</div>
 				</div>
+
 			</div>
 		</div>
 	</div>

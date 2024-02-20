@@ -2,13 +2,16 @@
 session_start();
 error_reporting(0);
 include('includes/config.php');
-include('includes/format_rupiah.php');
-include('includes/library.php');
-if(strlen($_SESSION['alogin'])==0){	
-	header('location:index.php');
-} else{ ?>
+if(strlen($_SESSION['alogin'])==0)
+	{	
+header('location:index.php');
+}
+else{
+ ?>
+
 <!doctype html>
 <html lang="en" class="no-js">
+
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -37,6 +40,7 @@ if(strlen($_SESSION['alogin'])==0){
 	<!-- Admin Stye -->
 	<link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 	<?php include('includes/header.php');?>
 
@@ -44,52 +48,76 @@ if(strlen($_SESSION['alogin'])==0){
 		<?php include('includes/leftbar.php');?>
 		<div class="content-wrapper">
 			<div class="container-fluid">
+
 				<div class="row">
 					<div class="col-md-12">
-						<h2 class="page-title">Data Paket</h2>
+
+						<h2 class="page-title">Member</h2>
+
 						<!-- Zero Configuration Table -->
 						<div class="panel panel-default">
-							<div class="panel-heading">
-								<a href="paket_tambah.php" class="btn btn-success">Tambah</a>
-							</div>
+							<div class="panel-heading">Daftar Member</div>
 							<div class="panel-body">
+							<?php if($error){?><div class="errorWrap"><strong>ERROR</strong>:<?php echo htmlentities($error); ?> </div><?php } 
+				else if($msg){?><div class="succWrap"><strong>SUCCESS</strong>:<?php echo htmlentities($msg); ?> </div><?php }?>
 							<div class = "table-responsive">
 								<table id="zctb" class="display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
 									<thead>
 										<tr>
 											<th>No</th>
-											<th>Nama Paket</th>
-											<th>Harga/Packs</th>
-											<th>Foto</th>
+											<th>Nama</th>
+											<th>Email</th>
+											<th>Telp</th>
+											<th>Alamat</th>
 											<th>Opsi</th>
 										</tr>
 									</thead>
 									<tbody>
-									<?php 
-										$nomor = 0;
-										$sqlmobil = "SELECT * FROM paket ORDER BY nama_paket ASC";
-										$querymobil = mysqli_query($koneksidb,$sqlmobil);
-										while ($result = mysqli_fetch_array($querymobil)){
-											$nomor++;
-											?>
+									<?php
+									$no=0;
+									$sql = "SELECT * from  member ";
+									$query = mysqli_query($koneksidb,$sql);
+									while($result=mysqli_fetch_array($query))
+									{
+										$no++;
+									?>	
 										<tr>
-											<td><?php echo htmlentities($nomor);?></td>
-											<td><?php echo htmlentities($result['nama_paket']);?></td>
-											<td><?php echo format_rupiah($result['harga']);?></td>
-											<td><img src="gallery/<?php echo $result['foto_paket'];?>" width="100px"></td>
-											<td align="center">
-												<a href="paket_edit.php?id=<?php echo $result['id_paket'];?>" class="btn btn-warning btn-xs">&nbsp;&nbsp;Ubah&nbsp;&nbsp;</a>&nbsp;&nbsp;
-												<a href="paket_hapus.php?id=<?php echo $result['id_paket'];?>" onclick="return confirm('Apakah anda yakin akan menghapus <?php echo $result['nama_paket'];?>?');" class="btn btn-danger btn-xs">&nbsp;&nbsp;Hapus&nbsp;&nbsp;</a>
+											<td><?php echo $no;?></td>
+											<td><?php echo htmlentities($result['nama_member']);?></td>
+											<td><?php echo htmlentities($result['email']);?></td>
+											<td><?php echo htmlentities($result['telp']);?></td>
+											<td><?php echo htmlentities($result['alamat']);?></td>
+											<td align='center'>
+												<a href="#myModal" data-toggle="modal" data-load-code="<?php echo $result['email']; ?>" data-remote-target="#myModal .modal-body" class="btn btn-primary btn-xs">Detail</a>
 											</td>
 										</tr>
 										<?php } ?>
+										
 									</tbody>
 								</table>
-							</div>
+						</div>
+	<!-- Large modal -->
+	<div class="modal fade bs-example-modal" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-body">
+					<p>One fine body…</p>
+				</div>
+			</div>
+		</div>
+	</div>    
+	<!-- Large modal --> 
+
+						
+
 							</div>
 						</div>
+
+					
+
 					</div>
 				</div>
+
 			</div>
 		</div>
 	</div>
@@ -104,6 +132,22 @@ if(strlen($_SESSION['alogin'])==0){
 	<script src="js/fileinput.js"></script>
 	<script src="js/chartData.js"></script>
 	<script src="js/main.js"></script>
+    <script>
+		var app = {
+			code: '0'
+		};
+		$('[data-load-code]').on('click',function(e) {
+					e.preventDefault();
+					var $this = $(this);
+					var code = $this.data('load-code');
+					if(code) {
+						$($this.data('remote-target')).load('userview.php?code='+code);
+						app.code = code;
+						
+					}
+		});
+    </script>
+
 </body>
 </html>
 <?php } ?>
